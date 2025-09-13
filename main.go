@@ -2,8 +2,10 @@ package main
 
 import (
 	"ecom-warehouse/config"
+	"ecom-warehouse/endpoint"
 	"ecom-warehouse/server"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -40,6 +42,15 @@ func main() {
 		log.Fatalf("migration failed: %v", err)
 	}
 
-	log.Fatal(http.ListenAndServe(":8084", nil))
+	log.Fatal(http.ListenAndServe(":8085", controller()))
 
+}
+
+func controller() *mux.Router {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/warehouse", endpoint.CreateWarehouseHandler).Methods("POST")
+	r.HandleFunc("/warehouse", endpoint.GetWarehousesHandler).Methods("GET")
+	r.HandleFunc("/warehouse/{id}", endpoint.GetWarehouseByIDHandler).Methods("GET")
+	return r
 }
